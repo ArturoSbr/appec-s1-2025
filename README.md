@@ -26,8 +26,23 @@ While this is an "applied" course, our first semester will mainly focus on the
   - Logit
 
 ## Assignments
-Assignments will be autograded by a set of GitHub Actions that are triggered when
-you submit your code. More details coming soon!
+In this class, you're expected to submit your code by creating a new branch, pushing
+your changes into it and passing a few builds. The goal of this workflow is to help you
+understand how code is written and shared in modern companies.
+
+In order to submit your homework:
+1. Clone the repo if you haven't done so already.
+3. Switch to `develop` (`git checkout develop`).
+2. Pull the latest changes (`git pull origin develop`).
+3. Create a branch and **hop onto it**
+(`git checkout -b assignment/{homework id}-{student id}`).
+4. Submit a single Python file:
+    - Must be named `{homework id}-{student id}.py` (eg, `glm-123456.py`).
+    - Must be placed in the corresponding homework's `code` directory (eg,
+    `./assignments/ivs/code/`).
+    - Submit the file by addig, commiting and pushing your code **to your branch**.
+5. If your branch and Python script are named correctly (steps 3 and 4), GitHub will
+autograde your code.
 
 ## Structure of this repo
 ```
