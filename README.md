@@ -32,7 +32,6 @@ you submit your code. More details coming soon!
 ## Structure of this repo
 ```
 .
-├── .flake8          # Linting configuration
 ├── .github          # GitHub builds (ignore this)
 ├── .gitignore       # Files ignored by git (ignore this)
 ├── assignments      # Homework assignments
