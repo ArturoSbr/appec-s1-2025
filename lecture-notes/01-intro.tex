@@ -1,0 +1,124 @@
+% Imports
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{
+    amsmath, amsthm, amssymb, verbatim
+}
+
+% Begin document
+\setlength{\parindent}{0pt}
+\begin{document}
+
+% Title
+\title{Applied Econometrics I Workshop}
+\author{Arturo Soberon}
+\date{}
+\maketitle
+
+% Intro to Causal Inference
+\setcounter{section}{0}
+\section{Introduction}
+Throughout the course, we will be interested in estimating the causal effect that some
+variable $X$ has on some outcome $Y$. This is a common concern among lab scientists,
+software developers, politicians, etc. Some people are super lucky and can estimate the
+causal effect of $X$ on $Y$ in a lab setting. Unfortunately, we economists usually
+cannot rely on experiments to discover causal relationships due to ethical or budget
+constraints.
+
+For example, if we were interested in measuring the causal effect that building a
+hospital has on the health of people who live nearby, we would face the following
+problems:
+\begin{enumerate}
+    \item Hospitals arguably improve people's health, and thus it would be unethical to
+    randomly choose where to build new hospitals. This could misallocate public
+    resources by favoring communities that already have good healthcare access over
+    underserved ones.
+    \item Hospitals are expensive to build, so we cannot justify a multi-billion
+    dollar experiment where we randomly pick where to build new hospitals and hire
+    health professionals.
+\end{enumerate}
+
+As a consequence, we economists have to get creative to measure causal effects. This
+course is dedicated to learning creative designs that allow us to derive causal insights
+from non-experimental data. In other words, we will learn how to use data drawn from
+real life and use it to draw causal insights.
+
+Formally, we are interested in estimating the causal effect of a treatment $D$ on an
+outcome $Y$. Suppose the treatment is binary and let $i$ be an observed unit (person,
+lab rat, etc.). The outcome for unit $i$, $Y_i$, can be expressed in terms of its
+\textit{potential outcomes}:
+
+\begin{equation}
+    Y_i =
+    \begin{cases}
+        Y_{0i}, & \text{if } D_i = 0 \text{ (unit is not treated)} \\
+        Y_{1i}, & \text{if } D_i = 1 \text{ (unit is treated)}
+    \end{cases}
+\end{equation}
+
+In a perfect testing environment, we could observe $Y_{1i}$ for unit $i$, rewind time,
+and then observe $Y_{0i}$ for the same unit. This way we could measure the true causal
+effect of the treatment on $i$ ($\tau_i = Y_{1i} - Y_{0i})$.
+
+Unfortunately, in the real world, we can only observe one of the two potential
+outcomes for each unit. This is the fundamental problem of causal inference. Given this
+limitation, a natural starting point is to compare the average outcomes of the treated
+and control groups.
+
+\begin{equation}
+    E[Y_i | D_i = 1] - E[Y_i | D_i = 0]
+\end{equation}
+
+However, this simple difference combines two distinct elements. We can decompose this
+term to see what is really going on:
+
+\begin{equation}\label{decomp}
+\begin{split}
+    E[Y_i | D_i = 1] - E[Y_i | D_i = 0] & = E[Y_{1i} | D_i = 1] - E[Y_{0i} | D_i = 0] \\
+    & = E[Y_{1i} | D_i = 1] - E[Y_{0i} | D_i = 0] \\
+    & \text{\qquad} + E[Y_{0i} | D_i = 1] -
+    E[Y_{0i} | D_i = 1] \\
+    & = \underbrace{E[Y_{1i} - Y_{0i} | D_i = 1]}_{\text{ATET}} + \underbrace{
+        E[Y_{0i} | D_i = 1] - E[Y_{0i} | D_i = 0]
+    }_{\text{Selection Bias}}
+\end{split}
+\end{equation}
+
+This equation implies that whenever we take the difference in means between two groups,
+the observed value is the sum of two terms:
+\begin{enumerate}
+    \item The average causal effect of $D$ on $Y$ for the \textbf{treatment
+    group}. This is known as the Average Treatment Effect on the Treated (ATET).
+    \item The average outcome the treatment group \textit{would have had} if they had
+    not been treated, minus the average outcome of the control group. We call this term
+    \textbf{Selection Bias}.
+\end{enumerate}
+
+There are two main issues here. First, we are not estimating the Average Treatment
+Effect (ATE) for the whole population. If anything, we are estimating the ATET, but it
+is \textit{contaminated} by the second term (selection bias).
+
+The easiest way to fix this is by randomly assigning the treatment. Doing this allows
+you, the researcher, to design an experiment where you can randomly assign the
+treatment to the units in the population. Like we mentioned earlier, this is seldom the
+case in Economics, but Randomized Controlled Trials (RCTs) are an important thing to
+learn for anyone interested in causal inference.
+
+So, assume $D_i$ is randomly assigned. Mathematically, this means that the potential
+outcomes are independent of the treatment assignment. This forces the selection bias
+term to zero:
+\[
+E[Y_{0i} | D_i = 1] - E[Y_{0i} | D_i = 0] = E[Y_{0i}] - E[Y_{0i}] = 0
+\]
+Under this assumption, we can simplify equation \eqref{decomp}. The simple difference
+in means now isolates the causal effect:
+\begin{equation}
+    E[Y_i | D_i = 1] - E[Y_i | D_i = 0] = E[Y_{1i} - Y_{0i} | D_i = 1] = E[Y_{1i} -
+    Y_{0i}]
+\end{equation}
+
+In other words, when the treatment is randomly assigned, the observed difference in
+average outcomes is a valid estimate of the Average Treatment Effect.
+
+% End document
+\end{document}
