@@ -12,7 +12,9 @@ couple of assertions and error messages.
 1. Make sure you're standing on branch `develop` (`git checkout develop`).
 2. Update `develop` (`git pull develop`)!
 3. Create a new branch with the following format: `a01-<student ID here (6 digits)>`.
-4. Create a new file in `assignments/a01/code` named `sol-<student ID here (6 digits)>`.
+For example: `a01-130524`.
+4. Create a new file in `assignments/a01/code` named
+`sol-<student ID here (6 digits)>.py`. For example: `sol-130524.py`.
 5. Declare a function named `welch_t_stat` in that file.
 6. Add, commit and push your changes to trigger the autograder.
 
