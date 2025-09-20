@@ -152,6 +152,7 @@ def test_flake8_linting():
 
 # Run tests
 check_test(test_imports, "Imports NumPy and Pandas")
+check_test(test_function_import, "Imports function")
 check_test(test_list_input, "Calculates t-stat with lists")
 check_test(test_tuple_input, "Calculates t-stat with tuples")
 check_test(test_ndarray_input, "Calculates t-stat with NumPy arrays")
