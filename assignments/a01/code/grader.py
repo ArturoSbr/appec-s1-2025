@@ -63,9 +63,8 @@ def test_imports():
 
 
 # Test 1: Checks if the function can be imported
-print("Running Test 1: Check function import... Passed!")
-score += 1
-print("-" * 20)
+def test_function_import():
+    assert callable(welch_t_stat), "'welch_t_stat' is not a callable function."
 
 
 # Test 2: List input
