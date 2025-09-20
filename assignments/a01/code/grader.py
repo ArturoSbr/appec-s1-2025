@@ -46,7 +46,8 @@ try:
     spec = importlib.util.spec_from_file_location("student_solution", student_file)
     student_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(student_module)
-    from student_module import welch_t_stat
+    sys.modules['student_solution'] = student_module
+    from student_solution import welch_t_stat
     print("Successfully imported student's function.")
 except (ImportError, AttributeError) as e:
     print(f"Cannot import 'welch_t_stat' from '{student_file}'.")
