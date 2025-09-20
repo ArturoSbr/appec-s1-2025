@@ -1,4 +1,5 @@
 # Applied Econometrics I
+
 Welcome to **Applied Econometrics I**! As the title suggests, this is the first course
 of a two-semester journey designed to teach you the theory and skills needed to conduct
 robust empirical analysis in economics and related fields.
@@ -7,25 +8,29 @@ While this is an "applied" course, our first semester will mainly focus on the
 **theoretical principles** of the models we will use next semester.
 
 ## Our guiding principle
+
 > **In order to be a good applied scientist, you must understand the theory behind the
 > tools you use.**
 
 ## Syllabus
+
 1. Tech skills
-  - Bash
-  - Git
-  - GitHub
-  - Python
+    - Bash
+    - Git
+    - GitHub
+    - Python
 2. Linear Regression
-  - Assumptions
-  - Interpretation
+    - Types of Biases
+    - Assumptions
+    - Interpretation
 3. Maximum Likelihood Estimation
-  - Gradient Descent
+    - Gradient Descent
 4. Generalized Linear Models
-  - Probit
-  - Logit
+    - Probit
+    - Logit
 
 ## Assignments
+
 In this class, you're expected to submit your code by creating a new branch, pushing
 your changes into it and passing a few builds. The goal of this workflow is to help you
 understand how code is written and shared in modern companies.
@@ -45,6 +50,7 @@ If your branch and Python script are named correctly (steps 3 and 4), GitHub wil
 autograde your code.
 
 ## Structure of this repo
+
 ```
 .
 ├── .github          # GitHub builds (ignore this)
@@ -56,6 +62,7 @@ autograde your code.
 ```
 
 ## Virtual Environment
+
 A virtual environment is a Python configuration designed to make your code replicable
 across computers. The idea is that my code should run on your computer the same way it
 does on mine.
@@ -65,6 +72,7 @@ This repo's configuration is very similar to
 simply cannot replicate our environment, you can always go use Colab as a last resort.
 
 ### Setting up your virtual environment
+
 If you're doing this for the first time, follow all these steps (or skip the ones you've
 already done before, such as installing Miniconda). If you've already done this before
 and all you want to do is activate the environment, then just run step 7.
@@ -74,6 +82,6 @@ and all you want to do is activate the environment, then just run step 7.
 3. Install the program you just downloaded.
 4. Clone this repository.
 5. Navigate into the cloned repository.
-6. Run `conda env create -f environment.yml` (this uses the file `environment.yml` and
-installs everything that's in it).
-7. Activate the environment with `conda activate econ`.
+6. Run `conda env create -f environment.yml` (this uses the file `environment.yml` to
+create a new environment named `appec` with all the required libraries).
+7. Activate the environment with `conda activate appec`.
