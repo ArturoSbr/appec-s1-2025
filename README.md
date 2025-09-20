@@ -53,12 +53,13 @@ autograde your code.
 
 ```
 .
-├── .github          # GitHub builds (ignore this)
-├── .gitignore       # Files ignored by git (ignore this)
-├── assignments      # Homework assignments
-├── environment.yml  # Virtual environment
-├── lecture-notes    # Lecture notes
-└── README.md        # Summary of this repo
+├── .github               # Ignore this
+├── .gitignore            # Ignore this
+├── assignments           # Homework assignments
+├── lecture-notes         # Lecture notes
+├── .grader-requirements  # Ignore this
+├── environment.yml       # Virtual environment
+└── README.md             # Summary of this repo
 ```
 
 ## Virtual Environment
