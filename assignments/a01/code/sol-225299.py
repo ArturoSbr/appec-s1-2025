@@ -1,5 +1,5 @@
-import numpy as np
-import pandas as pd
+import numpy as np      #Import numpy
+import pandas as pd     #Import pandas
 
 def welch_t_stat(control, treatment):
     """Calculate Welch's t-statistic.
