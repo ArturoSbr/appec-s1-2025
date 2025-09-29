@@ -1,5 +1,6 @@
-import numpy as np      #Import numpy
-import pandas as pd     #Import pandas
+import numpy as np
+import pandas as pd
+
 
 def welch_t_stat(control, treatment):
     """Calculate Welch's t-statistic.
@@ -32,7 +33,6 @@ def welch_t_stat(control, treatment):
             "Incorrect data type for argument 'control'. Expected list, tuple, "
             "numpy.ndarray or panda.Series."
         )
-
 
     # Calculate means
     mean_c = np.mean(control)
