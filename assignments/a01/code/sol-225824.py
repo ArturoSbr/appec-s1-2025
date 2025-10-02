@@ -58,4 +58,3 @@ def welch_t_stat(control, treatment):
 
     # Return
     return float(t_stat)
-    
