@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 
-
 def welch_t_stat(control, treatment):
     """
     Calculate Welch's t-statistic.
