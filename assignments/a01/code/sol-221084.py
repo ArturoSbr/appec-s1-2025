@@ -23,21 +23,24 @@ def welch_t_stat(control, treatment):
     Example
     -------
     welch_t_stat(
-              [1,2,3,4,5],
-              [6,7,8,9,10,11]
-                )
-
+        [1, 2, 3, 4, 5],
+        [6, 7, 8, 9, 10, 11],
+    )
     """
     # Quality Assurance (QA)
-    TYPES = (list, tuple, np.ndarray, pd.Series)
-    assert isinstance(control, TYPES), ( #para no repetir el código varias veces
-    'Incorrect data type for argument `control`. Expected list, tuple, np.ndarray, pd.Series.'
-    f'\nRecieved {type(control)} instead.'
-    )
-    assert isinstance(treatment, TYPES), ( #para no repetir el código varias veces
-    'Incorrect data type for argument `treatment`. Expected list, tuple, np.ndarray, pd.Series.'
-    f'\nRecieved {type(treatment)} instead.'
-    )
+    valid_types = (list, tuple, np.ndarray, pd.Series)
+
+    if not isinstance(control, valid_types):
+        raise TypeError(
+            "Incorrect data type for argument `control`. "
+            "Expected list, tuple, np.ndarray, or pd.Series."
+        )
+
+    if not isinstance(treatment, valid_types):
+        raise TypeError(
+            "Incorrect data type for argument `treatment`. "
+            "Expected list, tuple, np.ndarray, or pd.Series."
+        )
 
     # Calculate means
     mean_c = np.mean(control)
@@ -46,7 +49,8 @@ def welch_t_stat(control, treatment):
     # Calculate standard deviation under H_0
     sdev = np.sqrt(
         np.var(control, ddof=1) / len(control)
-        + np.var(treatment, ddof=1) / len(treatment))
+        + np.var(treatment, ddof=1) / len(treatment),
+    )
 
     # Calculate statistic
     t_stat = (mean_t - mean_c) / sdev
