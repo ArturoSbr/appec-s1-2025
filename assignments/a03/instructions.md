@@ -22,10 +22,10 @@ In order to test your algorithm, I will pass it the following arguments:
 - $\mathbb{X} \in \mathbb{R}^{n \times p}$ ($\mathbb{X}$ **always** includes a column
 full of ones for the intercept, so you don't need to add one yourself)
 - $y \in \mathbb{R}^{n}$
-- `random_state=42` (for replicability purposes, so make sure you use the same number)
-- $\textit{max\_iter} = 100000$
-- $\textit{min\_gain} = 0.000001$
-- $\textit{step\_size} = 0.001$
+- `random_state=42`
+- `max_iter=10000`
+- `min_gain=0.00001`
+- `step_size=0.001`
 
 Your algorithm should return a numpy ndarray of size $p$ representing the final
 parameters $\theta^* \in \text{arg min} J(\theta)$.
