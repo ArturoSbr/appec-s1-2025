@@ -15,15 +15,17 @@ below.
 out from the most updated version of `develop` (`git checkout develop`,
 `git pull develop`, and `git checkout -b assignment/a03-<student ID>`).
 2. Create a Python file in the `/code/` directory of this assignment and name it
-`sol-<student ID>.py. This is where you'll write your functions.
+`sol-<student ID>.py`. This is where you'll write your functions.
 
-I order to test your algorithm, I will pass it the following arguments:
+In order to test your algorithm, I will pass it the following arguments:
 
-- $\mathbb{X} \in \mathbb{R}^{n \times p}$
+- $\mathbb{X} \in \mathbb{R}^{n \times p}$ ($\mathbb{X}$ **always** includes a column
+full of ones for the intercept, so you don't need to add one yourself)
 - $y \in \mathbb{R}^{n \times 1}$
-- \textit{max\_iter} $\in \mathbb{N}$
-- \textit{min\_gain} $\in \mathbb{R}^+$
-- \textit{step\_size} $\in \mathbb{R}^+$
+- `random_state=42` (for replicability purposes, so make sure you use the same number)
+- $\textit{max\_iter} = 100000$
+- $\textit{min\_gain} = 0.000001$
+- $\textit{step\_size} = 0.001$
 
 Your algorithm should return a numpy ndarray of size $p \times 1$ representing the final
 parameters $\theta^* \in \text{arg min} J(\theta)$.
@@ -35,7 +37,7 @@ to use scipy's `normal` module. This function must return a numpy ndarray of sha
 
 4. Write a function `sigma(X, theta)` that applies the sigmoid function to all the
 observation (rows) of the dataset (`X`) using parameters `theta`. This function should
-return a numpy ndarray of shape `(n, )`, where each element in the array represents the
+return a numpy ndarray of shape `(n,)`, where each element in the array represents the
 predicted probability of each observation given `theta`.
 
 5. Write a function `loss(X, y, theta)` that evaluates the negative log-likelihood
