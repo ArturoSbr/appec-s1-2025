@@ -9,27 +9,33 @@ to work as the naive implementation of the gradient descent algorithm we saw in 
 See `../instructions.md` for more details!
 """
 
-# Imports (you don't need any other libraries!)
+# Imports (you don't need anything else!)
 import numpy as np
-from scipy.stats import norm 
 
 
 # Q3: Function that initializes theta
 def init_theta(p, random_state):
-    """Initialize theta using a multivariate normal distribution.
+    """Initialize theta using a standard normal distribution.
+
+    This function draws `p` observations from a standard normal distribution.
     
     Parameters
     ----------
     p: int
         Number of parameters in the model. Must match the number of columns in the data.
     random_state: int
-        Seed used for replicability purposes.
+        Seed used to replicate draw (see numpy.random.default_rng).
 
     Returns
     -------
     Numpy ndarray of shape (p,).
     """
-    pass
+
+    # Initialize random number generator
+    rng = np.random.default_rng(random_state)
+
+    # Draw from generator
+    return rng.normal()  # Complete this line!
 
 
 # Q4. Vectorized function that calculates predicted probabilities
@@ -89,8 +95,8 @@ def loss(X, y, theta):
         Feature matrix of shape (n, p) containing the observed characteristics of each
         observation. Its first column is always full of ones.
     y: numpy.ndarray
-        Target of shape (n,) cointaining the observed labels of each observation.
-    theta:
+        Target of shape (n,) containing the observed labels of each observation.
+    theta: numpy.ndarray
         The parameters of a logistic regression model. Its shape is (p,).
 
     Returns
@@ -110,8 +116,8 @@ def gradient(X, y, theta):
         Feature matrix of shape (n, p) containing the observed characteristics of each
         observation. Its first column is always full of ones.
     y: numpy.ndarray
-        Target of shape (n,) cointaining the observed labels of each observation.
-    theta:
+        Target of shape (n,) containing the observed labels of each observation.
+    theta: numpy.ndarray
         The parameters of a logistic regression model. Its shape is (p,).
 
     Returns
@@ -121,9 +127,9 @@ def gradient(X, y, theta):
     pass
 
 
-# Main naive gradient descent function
+# Q8. Main naive gradient descent function
 def gradient_descent(
-    X, y, random_state, max_iter=100000, min_gain=1e-6, step_size=0.001
+    X, y, random_state, max_iter=10000, min_gain=0.00001, step_size=0.001
 ):
     """Naive gradient descent algorithm for logistic regression.
     
@@ -137,36 +143,44 @@ def gradient_descent(
         Feature matrix of shape (n, p) containing the observed characteristics of each
         observation. Its first column is always full of ones.
     y: numpy.ndarray
-        Target of shape (n,) cointaining the observed labels of each observation.
+        Target of shape (n,) containing the observed labels of each observation.
     random_state: int
         The seed used to initialize theta.
     max_iter: int
-        The maximum number of updates to theta. Defaults to 100000.
+        The maximum number of updates to theta. Defaults to 10000.
     min_gain: float
         The minimum gain in the loss function to trigger another iteration. If the
         updated parameters, theta, fail to cause a gain larger than this threshold, the
-        algorithm comes to an early stop. Defaults to 1e-6
+        algorithm comes to an early stop. Defaults to 0.00001.
     step_size: Float
         This factor represents the fraction of the gradient used to update theta at each
-        iteration (`theta_1 = theta_0 - step_size * nabla`).
+        iteration (`theta_1 = theta_0 - step_size * nabla`). Defaults to 0.001.
 
     Returns
     -------
     Numpy ndarray of shape (p,) representing the final parameters estimated by the
     naive gradient descent algorithm.
     """
-    # Init theta randomly
+    # Init theta and evaluate the loss at that point
     theta_0 = init_theta(p=X.shape[1], random_state=random_state)
+    loss_0 = loss(X=X, y=y, theta=theta_0)
 
     # Iterate from 1 to T
     for i in range(max_iter):
 
-        # Use previous function to calculate necessary inputs
-        loss_0 = True
-        nabla = True
-        theta_1 = theta_0 - step_size * nabla
+        # Use previous functions to find theta_1
+        theta_1 = True
+
+        # Use theta_1 to calculate loss_1
         loss_1 = True
-        gain = abs(loss_1 - loss_0)  # Compare with min_gain to check for early stop
-    
-    # Return final theta (in case of no early stop)
+
+        # Use loss_0 and loss_1 to decide whether to continue or stop iterating
+        if loss_0 - loss_1 < min_gain:
+            break
+        
+        # Update parameters and loss for next iteration
+        theta_0 = True
+        loss_0 = True
+
+    # Return final theta
     return theta_1
