@@ -28,7 +28,7 @@ full of ones for the intercept, so you don't need to add one yourself)
 - `step_size=0.001`
 
 Your algorithm should return a numpy ndarray of size $p$ representing the final
-parameters $\theta^* \in \text{arg min} J(\theta)$.
+parameters $\theta^* \in \text{arg min } J(\theta)$.
 
 3. Write a function `init_theta(p, random_state)` which draws `p` observations from a
 standard normal distribution ($\mu = 0$ and $\sigma = 1$).
