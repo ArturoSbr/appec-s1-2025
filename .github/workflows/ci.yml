@@ -3,7 +3,8 @@ name: Assignment Builds
 on:
   push:
     branches:
-      - "assignment/a0*"
+      - "assignment/a01-*"
+      - "assignment/a02-*"
 
 jobs:
   # Assignment 1: t-statistic
@@ -27,7 +28,7 @@ jobs:
   # Assignment 2: joins
   a02:
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'assignment/a02-')
+    if: startsWith(github.ref_name, 'assignment/a02-')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
