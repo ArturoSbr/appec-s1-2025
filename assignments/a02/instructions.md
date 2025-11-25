@@ -71,9 +71,10 @@ and would therefore be less likely to leave a negative review (because the
 photos would arguably serve as a proxy for the product's quality and features).
 First fill the null values of column `table_products['product_photos_qty']` with
 its own median value. Then, add column `product_photos_qty` to `table_items` by
-joining it with `table_products` on `product_id`. Finally, calculate the average
-number of photos per order and store this aggregated dataset in a dataframe
-called `agg_pics`.
+joining it with `table_products` on `product_id`. Finally, calculate column
+`avg_pics` as the average number of photos per order and store this aggregated
+dataset in a dataframe called `agg_pics`. This frame's only columns must be
+`order_id` and `avg_pics`.
 
 8. The whole point of calculating `'avg_pics` is to use it as a feature in
 our models, so inner join `df` and `agg_pics` on `order_id` (do not add any
