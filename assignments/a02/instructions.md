@@ -23,8 +23,10 @@ this logic (1 = happy, 0 otherwise).
 
 2. Note that there's more reviews than there are order IDs. This happens
 when a user changes their thoughts and updates their review. You need to update
-`table_reviews` so that only the latest review of each order is preserved. Use
-column `'review_answer_timestamp'` to get the latest review for each order.
+`table_reviews` so that only the latest review of each order is preserved.
+Convert column `review_answer_timestamp` to datetime using `pd.to_datetime` and
+then use it to get the latest review for each order (hint: use
+`format='%Y-%m-%d %H:%M:%S'` when casting the column to datetime format).
 
 3. As you know, a single order may include multiple items. A peculiar thing
 about Olist is that their user satisfaction survey does not allow customers to
@@ -67,11 +69,11 @@ any other columns from `table_orders`).
 customer will be able to make a more informed decision when buying that product
 and would therefore be less likely to leave a negative review (because the
 photos would arguably serve as a proxy for the product's quality and features).
-First fill the null values of column `'product_photos_qty'` with its own median
-value. Then, add column `product_photos_qty` to `table_items` by joining it with
-`table_products` on `product_id`. Finally, calculate the average number of
-photos per order and store this aggregated dataset in a dataframe called
-`agg_pics`.
+First fill the null values of column `table_products['product_photos_qty']` with
+its own median value. Then, add column `product_photos_qty` to `table_items` by
+joining it with `table_products` on `product_id`. Finally, calculate the average
+number of photos per order and store this aggregated dataset in a dataframe
+called `agg_pics`.
 
 8. The whole point of calculating `'avg_pics` is to use it as a feature in
 our models, so inner join `df` and `agg_pics` on `order_id` (do not add any
