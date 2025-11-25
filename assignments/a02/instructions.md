@@ -86,7 +86,9 @@ You're welcome.
 10. Fit a logistic regression model to the final form of `df`. Make sure to only
 use delivered orders (filter `'order_status'`). The endogenous variable must be
 *happy*, and the exogenous variables must be *const, n_items, avg_price,
-avg_shipping, days_delay and avg_pics*
+avg_shipping, days_delay and avg_pics*. Store the model in `m1` and the fitted
+model in `m1_res`. Set `missing='drop'` to drop rows that have at least one null
+value in any of their columns.
 
 11. Now fit a logistic regression model to the final form of `df`. Like before,
 use delivered orders, and this time, exclude orders with multiple items. This
@@ -95,7 +97,8 @@ the only product in the order. This is just a robustness test to check if orders
 with more than one order are skewing our results. The endogenous variable must
 be *happy*, and the exogenous variables must be *const, avg_price, avg_shipping,
 days_delay and avg_pics*. We're dropping *n_items* because it is now full of
-ones.
+ones. Store the model in `m2` and the fitted values in `m2_res`. Use 
+`missing='drop'` again to exclude observations with null values.
 
 12. Remember to lint your code using
 `flake8 <path to your file> --max_line_length=88`.
