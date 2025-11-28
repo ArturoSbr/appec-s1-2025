@@ -1,14 +1,16 @@
 import numpy as np
-
-# Import pandas only for type checking, as the autograder may use pd.Series
-# as an input, fulfilling the instruction "pandas series".
+# Se importa pandas aquí para que esté disponible globalmente para el Test 1.
+# La verificación de tipos (PANDAS_SERIES) sigue siendo necesaria para el flujo.
 try:
     import pandas as pd
 
+    # Definir el tipo de Pandas Series aquí asegura que ARRAY_LIKE_TYPES
+    # lo pueda utilizar correctamente.
     PANDAS_SERIES = pd.Series
 except ImportError:
-    # If pandas is not available, the type is set to None
+    # Si pandas no está disponible, el tipo es None para evitar errores.
     PANDAS_SERIES = type(None)
+
 
 # Define a tuple with all accepted array-like types
 ARRAY_LIKE_TYPES = (list, tuple, np.ndarray, PANDAS_SERIES)
@@ -24,7 +26,7 @@ def welch_t_stat(control, treatment):
     """
 
     # 1. TYPE CHECK (Guardrail 1 - Required: TypeError)
-    # Checks if the object is NOT one of the expected array-like types.
+    # Verifica si el objeto NO es uno de los tipos array-like esperados.
     if not isinstance(control, ARRAY_LIKE_TYPES):
         raise TypeError(
             "Expected 'control' to be an array-like object (e.g., list, "
