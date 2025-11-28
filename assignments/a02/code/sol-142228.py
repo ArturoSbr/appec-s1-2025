@@ -45,8 +45,13 @@ table_orders['days_delay'] = (table_orders['order_delivered_customer_date'] - ta
 df = df.merge(table_orders[['order_id', 'order_status', 'days_delay']], on='order_id', how='inner')
 
 # Q7. Join table_items and table_products to calculate avg_pics
-items_products = table_items.merge(table_products, on='product_id', how='left')
-agg_pics = items_products.groupby('order_id').agg(avg_pics=('product_photos_qty', 'mean')).reset_index()
+median_photos = table_products['product_photos_qty'].median()
+table_products['product_photos_qty'] = table_products['product_photos_qty'].fillna(median_photos)
+
+items_products = table_items.merge(table_products[['product_id', 'product_photos_qty']], on='product_id', how='left')
+
+agg_pics = (items_products.groupby('order_id', as_index=False)['product_photos_qty'].mean().rename(columns={'product_photos_qty': 'avg_pics'}))
+
 
 # Q8. Add avg_pics to df
 df = df.merge(agg_pics, on='order_id', how='left')
