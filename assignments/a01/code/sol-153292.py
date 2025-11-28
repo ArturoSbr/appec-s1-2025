@@ -1,62 +1,40 @@
 import numpy as np
-# Import pandas only for type checking, as the autograder may use pd.Series 
-# as an input, fulfilling the instruction "pandas series".
-try:
-    import pandas as pd
-    PANDAS_SERIES = pd.Series
-except ImportError:
-    # If pandas is not available, the type is set to None
-    PANDAS_SERIES = type(None) 
 
-# Define a tuple with all accepted array-like types
-ARRAY_LIKE_TYPES = (list, tuple, np.ndarray, PANDAS_SERIES)
+# Define the acceptable array-like types for error checking
+ARRAY_LIKE_TYPES = (list, tuple, np.ndarray)
 
 def welch_t_stat(control, treatment):
-    """
-    Calculates the Welch's t-statistic for the difference in means between two samples.
-    The formula is: t = (x̄₁ - x̄₀) / sqrt(s₁²/n₁ + s₀²/n₀)
-    """
-    
-    # 1. TYPE CHECK (Guardrail 1 - Required: TypeError)
-    # Checks if the object is NOT one of the expected array-like types.
-    if not isinstance(control, ARRAY_LIKE_TYPES):
-        raise TypeError(
-            f"Expected 'control' to be an array-like object (e.g., list, tuple, numpy.ndarray, pandas.Series), "
-            f"but got {type(control).__name__}"
-        )
-    if not isinstance(treatment, ARRAY_LIKE_TYPES):
-        raise TypeError(
-            f"Expected 'treatment' to be an array-like object (e.g., list, tuple, numpy.ndarray, pandas.Series), "
-            f"but got {type(treatment).__name__}"
-        )
+    # Quality assurance (QA)
 
-    # Convert to NumPy arrays for calculation
+    # 1. Type Guardrail (Required by Assignment)
+    if not isinstance(control, ARRAY_LIKE_TYPES):
+        raise TypeError(f"Expected 'control' to be an array-like object, but got {type(control).__name__}")
+    if not isinstance(treatment, ARRAY_LIKE_TYPES):
+        raise TypeError(f"Expected 'treatment' to be an array-like object, but got {type(treatment).__name__}")
+
+    # Convert to NumPy arrays for calculation consistency and handling array-like inputs
     control_arr = np.array(control)
     treatment_arr = np.array(treatment)
-    
-    # 2. SIZE CHECK (Guardrail 2 - AssertionError)
+
+    # 2. Size Guardrail (Assertion for non-empty arrays)
     if control_arr.size == 0 or treatment_arr.size == 0:
         raise AssertionError("Both 'control' and 'treatment' groups must be non-empty.")
 
-    # --- Component Calculation ---
-    
-    # Control Group (x₀, n₀, s₀²)
+    # Calculate means
+    # NOTE: Using the numpy array versions ensures the mean function is available.
     mean_c = np.mean(control_arr)
-    var_c = np.var(control_arr, ddof=1) # ddof=1 for sample variance
-    n_c = len(control_arr)              
-
-    # Treatment Group (x₁, n₁, s₁²)
     mean_t = np.mean(treatment_arr)
-    var_t = np.var(treatment_arr, ddof=1)
-    n_t = len(treatment_arr)
 
-    # Calculate the Standard Error of the Difference
+    # Calculate standard deviation under H_0 (Standard Error of the Difference)
+    # The assignment requires using the provided calculation structure.
     sdev = np.sqrt(
-         (var_t / n_t)
-         + (var_c / n_c)
+         np.var(control_arr, ddof=1) / len(control_arr)
+         + np.var(treatment_arr, ddof=1) / len(treatment_arr)
     )
 
-    # Calculate the t-statistic
+    # Calculate statistic
     t_stat = (mean_t - mean_c) / sdev
-    
-    return float(t_stat) # Return as a float, as required
+
+    return float(t_stat)
+
+
