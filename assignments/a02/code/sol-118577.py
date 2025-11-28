@@ -20,7 +20,7 @@ table_products = pd.read_csv(os.path.join('..', 'data', 'products.csv'))
 table_reviews = pd.read_csv(os.path.join('..', 'data', 'reviews.csv'))
 
 # Q1. Create binary target
-table_reviews['target'] = table_reviews['review_score'].gt(3).astype(int)
+table_reviews['happy'] = table_reviews['review_score'].gt(3).astype(int)
 
 # Q2. Keep only the last review of each order
 table_reviews = table_reviews.sort_values('review_date').drop_duplicates('order_id', keep='last')
