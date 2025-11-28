@@ -1,16 +1,15 @@
+
 import numpy as np
-# Se importa pandas aquí para que esté disponible globalmente para el Test 1.
-# La verificación de tipos (PANDAS_SERIES) sigue siendo necesaria para el flujo.
+
+# Import pandas only for type checking, as the autograder may use pd.Series
+# as an input, fulfilling the instruction "pandas series".
 try:
     import pandas as pd
 
-    # Definir el tipo de Pandas Series aquí asegura que ARRAY_LIKE_TYPES
-    # lo pueda utilizar correctamente.
     PANDAS_SERIES = pd.Series
 except ImportError:
-    # Si pandas no está disponible, el tipo es None para evitar errores.
+    # If pandas is not available, the type is set to None
     PANDAS_SERIES = type(None)
-
 
 # Define a tuple with all accepted array-like types
 ARRAY_LIKE_TYPES = (list, tuple, np.ndarray, PANDAS_SERIES)
@@ -18,15 +17,12 @@ ARRAY_LIKE_TYPES = (list, tuple, np.ndarray, PANDAS_SERIES)
 
 def welch_t_stat(control, treatment):
     """
-    Calculates the Welch's t-statistic for the difference in means between two 
-    samples.
-    
-    The formula is: 
-    $$t = \frac{\bar{x}_1 - \bar{x}_0}{\sqrt{s_1^2/n_1 + s_0^2/n_0}}$$
+    Calculates the Welch's t-statistic for the difference in means between two samples.
+    The formula is: t = (x_bar1 - x_bar0) / sqrt(s1^2/n1 + s0^2/n0)
     """
 
     # 1. TYPE CHECK (Guardrail 1 - Required: TypeError)
-    # Verifica si el objeto NO es uno de los tipos array-like esperados.
+    # Checks if the object is NOT one of the expected array-like types.
     if not isinstance(control, ARRAY_LIKE_TYPES):
         raise TypeError(
             "Expected 'control' to be an array-like object (e.g., list, "
