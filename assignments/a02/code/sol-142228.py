@@ -20,66 +20,37 @@ table_products = pd.read_csv(os.path.join('..', 'data', 'products.csv'))
 table_reviews = pd.read_csv(os.path.join('..', 'data', 'reviews.csv'))
 
 # Q1. Create binary target
-# Asignar columna 'happy' (1 si score >= 4, sino 0)
+# Las instrucciones piden la columna 'happy', no 'target'
 table_reviews['happy'] = table_reviews['review_score'].ge(4).astype(int)
 
 # Q2. Keep only the last review of each order
-# Convertir a datetime y ordenar para mantener el último
-table_reviews['review_answer_timestamp'] = pd.to_datetime(
-    table_reviews['review_answer_timestamp'], format='%Y-%m-%d %H:%M:%S'
-)
-table_reviews = table_reviews.sort_values('review_answer_timestamp').drop_duplicates(
-    subset=['order_id'], keep='last'
-)
+table_reviews['review_answer_timestamp'] = pd.to_datetime(table_reviews['review_answer_timestamp'], format='%Y-%m-%d %H:%M:%S')
+table_reviews = table_reviews.sort_values('review_answer_timestamp')
+table_reviews = table_reviews.drop_duplicates(subset=['order_id'], keep='last')
 
 # Q3 Declare agg_items
-# Agrupar items por orden: contar items, promedio de precio y envío
-agg_items = (
-    table_items.groupby('order_id')
-    .agg(
-        n_items=('order_item_id', 'count'),
-        avg_price=('price', 'mean'),
-        avg_shipping=('freight_value', 'mean'),
-    )
-    .reset_index()
-)
+agg_items = (table_items.groupby('order_id').agg(n_items=('order_item_id', 'count'), avg_price=('price', 'mean'),
+        avg_shipping=('freight_value', 'mean'),).reset_index())
 
 # Q4. Join table_reviews and agg_items to create df
 df = pd.merge(table_reviews, agg_items, on='order_id', how='inner')
 
 # Q5. Calculate days_delay in table_orders
-# Convertir fechas y calcular diferencia en días
-table_orders['order_estimated_delivery_date'] = pd.to_datetime(
-    table_orders['order_estimated_delivery_date'], format='%Y-%m-%d %H:%M:%S'
-)
-table_orders['order_delivered_customer_date'] = pd.to_datetime(
-    table_orders['order_delivered_customer_date'], format='%Y-%m-%d %H:%M:%S'
-)
-table_orders['days_delay'] = (
-    table_orders['order_delivered_customer_date']
-    - table_orders['order_estimated_delivery_date']
-).dt.days
+table_orders['order_estimated_delivery_date'] = pd.to_datetime(table_orders['order_estimated_delivery_date'], format='%Y-%m-%d %H:%M:%S')
+table_orders['order_delivered_customer_date'] = pd.to_datetime(table_orders['order_delivered_customer_date'], format='%Y-%m-%d %H:%M:%S')
+table_orders['days_delay'] = (table_orders['order_delivered_customer_date'] - table_orders['order_estimated_delivery_date']).dt.days
 
 # Q6. Join df and table_orders to add days_delay
-# Unir solo order_status y days_delay
-df = pd.merge(
-    df,
-    table_orders[['order_id', 'order_status', 'days_delay']],
-    on='order_id',
-    how='inner',
-)
+df = pd.merge(df, table_orders[['order_id', 'order_status', 'days_delay']],
+    on='order_id', how='inner',)
 
 # Q7. Join table_items and table_products to calculate avg_pics
-# Llenar nulos con mediana, unir y calcular promedio de fotos
 median_photos = table_products['product_photos_qty'].median()
 table_products['product_photos_qty'] = table_products['product_photos_qty'].fillna(
-    median_photos
-)
+    median_photos)
 
 items_products = pd.merge(table_items, table_products, on='product_id', how='inner')
-agg_pics = (
-    items_products.groupby('order_id')['product_photos_qty'].mean().reset_index()
-)
+agg_pics = (items_products.groupby('order_id')['product_photos_qty'].mean().reset_index())
 agg_pics.columns = ['order_id', 'avg_pics']
 
 # Q8. Add avg_pics to df
@@ -89,25 +60,14 @@ df = pd.merge(df, agg_pics, on='order_id', how='inner')
 df['const'] = 1
 
 # Q10. Fit model 1
-# Modelo Logit para órdenes entregadas usando todas las variables
 mask_delivered = df['order_status'] == 'delivered'
 cols_m1 = ['const', 'n_items', 'avg_price', 'avg_shipping', 'days_delay', 'avg_pics']
 
-m1 = sm.Logit(
-    df.loc[mask_delivered, 'happy'],
-    df.loc[mask_delivered, cols_m1],
-    missing='drop',
-)
+m1 = sm.Logit(df.loc[mask_delivered, 'happy'],df.loc[mask_delivered, cols_m1], missing='drop',)
 m1_res = m1.fit()
 
 # Q11. Fit model 2
-# Modelo Logit para órdenes entregadas y con un solo ítem (excluyendo n_items)
 mask_m2 = (df['order_status'] == 'delivered') & (df['n_items'] == 1)
 cols_m2 = ['const', 'avg_price', 'avg_shipping', 'days_delay', 'avg_pics']
-
-m2 = sm.Logit(
-    df.loc[mask_m2, 'happy'],
-    df.loc[mask_m2, cols_m2],
-    missing='drop'
-)
+m2 = sm.Logit(df.loc[mask_m2, 'happy'],df.loc[mask_m2, cols_m2],missing='drop')
 m2_res = m2.fit()
