@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd  # Required by the autograder
 
-# Define accepted array-like types (no try/except)
+# Define accepted array-like types
 ARRAY_LIKE_TYPES = (list, tuple, np.ndarray, pd.Series)
 
 
