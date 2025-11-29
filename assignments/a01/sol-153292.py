@@ -1,4 +1,3 @@
-
 import numpy as np
 
 # Import pandas only for type checking, as the autograder may use pd.Series
@@ -17,22 +16,24 @@ ARRAY_LIKE_TYPES = (list, tuple, np.ndarray, PANDAS_SERIES)
 
 def welch_t_stat(control, treatment):
     """
-    Calculates the Welch's t-statistic for the difference in means between two samples.
-    The formula is: t = (x_bar1 - x_bar0) / sqrt(s1^2/n1 + s0^2/n0)
+    Calculates Welch's t-statistic for the difference in means between two
+    samples. The formula is:
+    t = (x_bar1 - x_bar0) / sqrt(s1^2/n1 + s0^2/n0)
     """
-
     # 1. TYPE CHECK (Guardrail 1 - Required: TypeError)
     # Checks if the object is NOT one of the expected array-like types.
     if not isinstance(control, ARRAY_LIKE_TYPES):
         raise TypeError(
-            "Expected 'control' to be an array-like object (e.g., list, "
-            f"tuple, numpy.ndarray, pandas.Series), but got {type(control).__name__}"
+            "Expected 'control' to be an array-like object "
+            "(e.g., list, tuple, numpy.ndarray, pandas.Series), "
+            f"but got {type(control).__name__}"
         )
 
     if not isinstance(treatment, ARRAY_LIKE_TYPES):
         raise TypeError(
-            "Expected 'treatment' to be an array-like object (e.g., list, "
-            f"tuple, numpy.ndarray, pandas.Series), but got {type(treatment).__name__}"
+            "Expected 'treatment' to be an array-like object "
+            "(e.g., list, tuple, numpy.ndarray, pandas.Series), "
+            f"but got {type(treatment).__name__}"
         )
 
     # Convert to NumPy arrays for calculation
@@ -63,4 +64,4 @@ def welch_t_stat(control, treatment):
     # Calculate the t-statistic
     t_stat = (mean_t - mean_c) / sdev
 
-    return float(t_stat)  # Return as a float, as required
+    return float(t_stat)
