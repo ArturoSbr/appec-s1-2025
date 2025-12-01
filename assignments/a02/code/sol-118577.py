@@ -26,9 +26,18 @@ table_reviews['happy'] = table_reviews['review_score'].gt(3).astype(int)
 table_reviews['review_answer_timestamp'] = pd.to_datetime(
     table_reviews['review_answer_timestamp'], format='%Y-%m-%d %H:%M:%S'
 )
-
+table_reviews = table_reviews.sort_values(
+    'review_answer_timestamp', ascending=False
+).drop_duplicates(subset=['order_id'], keep='first')
 # Q3 Declare agg_items
+agg_items = table_items.groupby('order_id').agg(
+    n_items=('order_item_id', 'count'),
+    avg_price=('price', 'mean'),
+    avg_shipping=('freight_value', 'mean')
+).reset_index()
 
+# Rename columns to match requirements
+agg_items.columns = ['order_id', 'n_items', 'avg_price', 'avg_shipping']
 # Q4. Join table_reviews and agg_items to create df
 
 # Q5. Calculate days_delay in table_orders
