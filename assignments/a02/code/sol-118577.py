@@ -14,21 +14,21 @@ import pandas as pd
 import statsmodels.api as sm
 
 # Read tables (don't change anything here)
-table_items = pd.read_csv(os.path.join('..', 'data', 'items.csv'))
-table_orders = pd.read_csv(os.path.join('..', 'data', 'orders.csv'))
-table_products = pd.read_csv(os.path.join('..', 'data', 'products.csv'))
-table_reviews = pd.read_csv(os.path.join('..', 'data', 'reviews.csv'))
+table_reviews=pd.read_csv('/reviews.csv')
+table_items = pd.read_csv(os.path.join('/items.csv'))
+table_orders = pd.read_csv(os.path.join('/orders.csv'))
+table_products = pd.read_csv(os.path.join('/products.csv'))
 
 # Q1. Create binary target
-table_reviews['happy'] = table_reviews['review_score'].gt(3).astype(int)
+table_reviews['happy'] = (table_reviews['review_score'] >= 4).astype(int)
 
 # Q2. Keep only the last review of each order
 table_reviews['review_answer_timestamp'] = pd.to_datetime(
     table_reviews['review_answer_timestamp'], format='%Y-%m-%d %H:%M:%S'
 )
-table_reviews = table_reviews.sort_values(
-    'review_answer_timestamp', ascending=False
-).drop_duplicates(subset=['order_id'], keep='first')
+table_reviews = table_reviews.sort_values('review_answer_timestamp')
+table_reviews = table_reviews.drop_duplicates(subset='order_id', keep='last')
+
 # Q3 Declare agg_items
 agg_items = table_items.groupby('order_id').agg(
     n_items=('order_item_id', 'count'),
@@ -38,18 +38,78 @@ agg_items = table_items.groupby('order_id').agg(
 
 # Rename columns to match requirements
 agg_items.columns = ['order_id', 'n_items', 'avg_price', 'avg_shipping']
+
 # Q4. Join table_reviews and agg_items to create df
+df = pd.merge(table_reviews, agg_items, on='order_id', how='inner')
 
 # Q5. Calculate days_delay in table_orders
+table_orders['order_estimated_delivery_date'] = pd.to_datetime(
+    table_orders['order_estimated_delivery_date'], format='%Y-%m-%d %H:%M:%S'
+)
+table_orders['order_delivered_customer_date'] = pd.to_datetime(
+    table_orders['order_delivered_customer_date'], format='%Y-%m-%d %H:%M:%S'
+)
+
+table_orders['days_delay'] = (
+    table_orders['order_delivered_customer_date'] -
+    table_orders['order_estimated_delivery_date']
+).dt.days
 
 # Q6. Join df and table_orders to add days_delay
+df = pd.merge(
+    df,
+    table_orders[['order_id', 'order_status', 'days_delay']],
+    on='order_id',
+    how='inner'
+)
 
 # Q7. Join table_items and table_products to calculate avg_pics
+# Fill nulls in product photos
+median_photos = table_products['product_photos_qty'].median()
+table_products['product_photos_qty'] = table_products['product_photos_qty'].fillna(
+    median_photos
+)
+
+# Join items with products first to link items to their photo counts
+items_products = pd.merge(
+    table_items,
+    table_products[['product_id', 'product_photos_qty']],
+    on='product_id'
+)
+
+# Aggregate to get avg_pics per order
+agg_pics = items_products.groupby('order_id')['product_photos_qty'].mean().reset_index()
+agg_pics.rename(columns={'product_photos_qty': 'avg_pics'}, inplace=True)
 
 # Q8. Add avg_pics to df
+df = pd.merge(df, agg_pics, on='order_id', how='inner')
 
 # Q9. Add 'const' to df
+df['const'] = 1
 
 # Q10. Fit model 1
+# Filter for delivered orders
+df_m1 = df[df['order_status'] == 'delivered']
+
+y1 = df_m1['happy']
+X1 = df_m1[['const', 'n_items', 'avg_price', 'avg_shipping', 'days_delay', 'avg_pics']]
+
+m1 = sm.Logit(y1, X1, missing='drop')
+m1_res = m1.fit()
 
 # Q11. Fit model 2
+# Filter for delivered orders with exactly 1 item
+df_m2 = df[(df['order_status'] == 'delivered') & (df['n_items'] == 1)]
+
+y2 = df_m2['happy']
+# Exclude n_items from covariates
+X2 = df_m2[['const', 'avg_price', 'avg_shipping', 'days_delay', 'avg_pics']]
+
+m2 = sm.Logit(y2, X2, missing='drop')
+m2_res = m2.fit()
+
+# Q12. Print summaries
+print("Model 1 Summary:")
+print(m1_res.summary())
+print("\nModel 2 Summary:")
+print(m2_res.summary())
