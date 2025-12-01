@@ -23,45 +23,67 @@ table_reviews = pd.read_csv(os.path.join('..', 'data', 'reviews.csv'))
 table_reviews['happy'] = (table_reviews['review_score'] > 3).astype(int)
 
 # Q2. Keep only the last review of each order
-table_reviews['review_answer_datetime'] = pd.to_datetime(table_reviews["review_answer"
-    "_timestamp"], format='%Y-%m-%d %H:%M:%S')
-table_reviews = (table_reviews.sort_values("review_answer_timestamp")
-                 .drop_duplicates("order_id", keep="last"))
+table_reviews['review_answer_timestamp'] = pd.to_datetime(
+    table_reviews["review_answer_timestamp"],
+    format='%Y-%m-%d %H:%M:%S',
+)
+table_reviews = (
+    table_reviews.sort_values("review_answer_timestamp")
+    .drop_duplicates("order_id", keep="last")
+)
 
 # Q3 Declare agg_items
-agg_items = (table_items.groupby('order_id')
-             .agg(n_items=('order_id', 'count'),
-                  avg_price=('price', 'mean'),
-                  avg_shipping=('freight_value', 'mean')
-).reset_index())
+agg_items = (
+    table_items.groupby('order_id')
+    .agg(
+        n_items=('order_id', 'count'),
+        avg_price=('price', 'mean'),
+        avg_shipping=('freight_value', 'mean'),
+    )
+    .reset_index()
+)
 
 # Q4. Join table_reviews and agg_items to create df
 df = table_reviews.merge(right=agg_items, how='inner', on=['order_id'])
 
 # Q5. Calculate days_delay in table_orders
-table_orders['order_estimated_delivery_date'] = pd.to_datetime(table_orders['order_'
-    'estimated_delivery_date'], format='%Y-%m-%d %H:%M:%S')
-table_orders['order_delivered_customer_date'] = pd.to_datetime(table_orders['order_'
-    'delivered_customer_date'], format='%Y-%m-%d %H:%M:%S')
-table_orders['days_delay'] = (table_orders['order_delivered_customer_date'] -
-                              table_orders['order_estimated_delivery_date']).dt.days
+table_orders['order_estimated_delivery_date'] = pd.to_datetime(
+    table_orders['order_estimated_delivery_date'],
+    format='%Y-%m-%d %H:%M:%S',
+)
+table_orders['order_delivered_customer_date'] = pd.to_datetime(
+    table_orders['order_delivered_customer_date'],
+    format='%Y-%m-%d %H:%M:%S',
+)
+table_orders['days_delay'] = (
+        table_orders['order_delivered_customer_date']
+        - table_orders['order_estimated_delivery_date']
+).dt.days
 
 # Q6. Join df and table_orders to add days_delay
-df = df.merge(right=table_orders[['order_id', 'order_status', 'days_delay']],
-              how='inner', on=['order_id'])
+df = df.merge(
+    right=table_orders[['order_id', 'order_status', 'days_delay']],
+    how='inner',
+    on=['order_id'],
+)
 
 # Q7. Join table_items and table_products to calculate avg_pics
 table_products['product_photos_qty'] = table_products['product_photos_qty'].fillna(
-    table_products['product_photos_qty'].median())
-table_items = table_items.merge(right=table_products[['product_id', 'product'
-    '_photos_qty']], how='inner', on=['product_id'])
-agg_pics = (table_items.groupby('order_id')
-            .agg(avg_pics=('product_photos_qty', 'mean'))
-            .reset_index())
+    table_products['product_photos_qty'].median()
+)
+table_items = table_items.merge(
+    right=table_products[['product_id', 'product_photos_qty']],
+    how='inner',
+    on=['product_id'],
+)
+agg_pics = (
+    table_items.groupby('order_id')
+    .agg(avg_pics=('product_photos_qty', 'mean'))
+    .reset_index()
+)
 
 # Q8. Add avg_pics to df
-df = df.merge(right=agg_pics[['order_id', 'avg_pics']],
-              how='inner', on=['order_id'])
+df = df.merge(right=agg_pics[['order_id', 'avg_pics']], how='inner', on=['order_id'],)
 
 # Q9. Add 'const' to df
 df['const'] = 1
@@ -69,19 +91,19 @@ df['const'] = 1
 # Q10. Fit model 1
 df_delivered = df[df['order_status'] == 'delivered'].copy()
 endog = df_delivered['happy']
-exog = df_delivered[['const', 'n_items', 'avg_price', 'avg_shipping', 'days_delay',
-    'avg_pics']]
+exog = df_delivered[
+    ['const', 'n_items', 'avg_price', 'avg_shipping', 'days_delay', 'avg_pics']
+]
 m1 = sm.Logit(endog, exog, missing='drop')
 m1_res = m1.fit()
-print(m1_res.summary())
 
 # Q11. Fit model 2
-df_delivered_single = (df[(df['order_status'] == 'delivered') & (df['n_items'] == 1)]
-                       .copy())
-endog = df_delivered['happy']
-exog = df_delivered[['const', 'avg_price', 'avg_shipping', 'days_delay',
-                     'avg_pics']]
+df_delivered_single = df[
+    (df['order_status'] == 'delivered') & (df['n_items'] == 1)
+].copy()
+endog = df_delivered_single['happy']
+exog = df_delivered_single[
+    ['const', 'avg_price', 'avg_shipping', 'days_delay', 'avg_pics']
+]
 m2 = sm.Logit(endog, exog, missing='drop')
 m2_res = m2.fit()
-
-print(m2_res.summary())
