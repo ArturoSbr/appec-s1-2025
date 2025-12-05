@@ -20,6 +20,7 @@ table_products = pd.read_csv(os.path.join('..', 'data', 'products.csv'))
 table_reviews = pd.read_csv(os.path.join('..', 'data', 'reviews.csv'))
 
 # Q1. Create binary target
+table_reviews['happy'] = (table_reviews['review_score'] >= 4).astype(int)
 
 # Q2. Keep only the last review of each order
 
