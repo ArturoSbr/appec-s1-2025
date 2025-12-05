@@ -36,6 +36,7 @@ agg_items = table_items.groupby('order_id').agg(
 ).reset_index()
 
 # Q4. Join table_reviews and agg_items to create df
+df = pd.merge(table_reviews, agg_items, on='order_id', how='inner')
 
 # Q5. Calculate days_delay in table_orders
 
