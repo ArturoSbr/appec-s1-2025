@@ -39,6 +39,9 @@ agg_items = table_items.groupby('order_id').agg(
 df = pd.merge(table_reviews, agg_items, on='order_id', how='inner')
 
 # Q5. Calculate days_delay in table_orders
+table_orders['order_estimated_delivery_date'] = pd.to_datetime(table_orders['order_estimated_delivery_date'])
+table_orders['order_delivered_customer_date'] = pd.to_datetime(table_orders['order_delivered_customer_date'])
+table_orders['days_delay'] = (table_orders['order_estimated_delivery_date'] - table_orders['order_delivered_customer_date']).dt.days
 
 # Q6. Join df and table_orders to add days_delay
 
