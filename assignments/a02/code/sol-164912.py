@@ -23,6 +23,10 @@ table_reviews = pd.read_csv(os.path.join('..', 'data', 'reviews.csv'))
 table_reviews['happy'] = (table_reviews['review_score'] >= 4).astype(int)
 
 # Q2. Keep only the last review of each order
+table_reviews['review_answer_timestamp'] = pd.to_datetime(table_reviews['review_answer_timestamp'])
+table_reviews = table_reviews.sort_values(by=['order_id', 'review_answer_timestamp'])
+table_reviews = table_reviews.drop_duplicates(subset=['order_id'], keep='last')
+
 
 # Q3 Declare agg_items
 
