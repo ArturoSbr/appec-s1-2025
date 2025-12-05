@@ -59,5 +59,8 @@ df = pd.merge(df, agg_pics[['order_id', 'avg_pics']], on='order_id', how='inner'
 df['const'] = 1
 
 # Q10. Fit model 1
+cols = ['const', 'n_items', 'avg_price', 'avg_shipping', 'days_delay', 'avg_pics']
+m1 = sm.Logit(df.loc[df['order_status'] == 'delivered', 'happy'], df.loc[df['order_status'] == 'delivered', cols], missing='drop')
+m1_res = m1.fit()
 
 # Q11. Fit model 2
