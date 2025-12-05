@@ -44,6 +44,7 @@ table_orders['order_delivered_customer_date'] = pd.to_datetime(table_orders['ord
 table_orders['days_delay'] = (table_orders['order_estimated_delivery_date'] - table_orders['order_delivered_customer_date']).dt.days
 
 # Q6. Join df and table_orders to add days_delay
+df = pd.merge(df, table_orders[['order_id', 'order_status', 'days_delay']], on='order_id', how='inner')
 
 # Q7. Join table_items and table_products to calculate avg_pics
 
