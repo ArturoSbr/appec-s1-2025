@@ -51,7 +51,9 @@ table_products['product_photos_qty'].median()
 table_products['product_photos_qty'].fillna(table_products['product_photos_qty'].median(), inplace=True)
 agg_pics = table_items.groupby('order_id')['product_photos_qty'].mean().reset_index()
 agg_pics.columns = ['order_id', 'avg_pics']
+
 # Q8. Add avg_pics to df
+df = pd.merge(df, agg_pics[['order_id', 'avg_pics']], on='order_id', how='inner')
 
 # Q9. Add 'const' to df
 
