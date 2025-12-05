@@ -56,6 +56,7 @@ agg_pics.columns = ['order_id', 'avg_pics']
 df = pd.merge(df, agg_pics[['order_id', 'avg_pics']], on='order_id', how='inner')
 
 # Q9. Add 'const' to df
+df['const'] = 1
 
 # Q10. Fit model 1
 
