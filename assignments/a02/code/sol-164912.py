@@ -64,3 +64,7 @@ m1 = sm.Logit(df.loc[df['order_status'] == 'delivered', 'happy'], df.loc[df['ord
 m1_res = m1.fit()
 
 # Q11. Fit model 2
+cols = ['const', 'avg_price', 'avg_shipping', 'days_delay', 'avg_pics']
+multiples = (df['order_status'] == 'delivered') & (df['n_items'] == 1)
+m2 = sm.Logit(df.loc[multiples, 'happy'], df.loc[multiples, cols], missing='drop')
+m2_res = m2.fit()
