@@ -29,6 +29,11 @@ table_reviews = table_reviews.drop_duplicates(subset=['order_id'], keep='last')
 
 
 # Q3 Declare agg_items
+agg_items = table_items.groupby('order_id').agg(
+    n_items=('order_item_id', 'count'),
+    avg_price=('price', 'mean'),
+    avg_shipping=('freight_value', 'mean')
+).reset_index()
 
 # Q4. Join table_reviews and agg_items to create df
 
