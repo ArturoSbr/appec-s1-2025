@@ -6,8 +6,8 @@ Your job is to implement your own version of the gradient descent algorithm to f
 best parameters of any logistic regression model.
 
 It is extremely important that you vectorize your functions! Avoid using `for` loops at
-all costs! The only `for` loop you should use is the one in the pseudo-code described
-below.
+all costs! The only `for` loop you should use is the one that's already written in the
+`hints.py` file.
 
 ## Instructions
 
@@ -50,12 +50,12 @@ parameters $\theta^* \in \text{arg min } J(\theta)$.
 standard normal distribution ($\mu = 0$ and $\sigma = 1$).
 
 2. Write a function `sigma(X, theta)` that applies the sigmoid function to all the
-observation (rows) of the dataset (`X`) using parameters `theta`. This function should
+observations (rows) of the dataset (`X`) using parameters `theta`. This function should
 return a numpy ndarray of shape `(n,)`, where each element in the array represents the
 predicted probability of each observation given `theta`.
 
 3. Write a function `classify(X, theta, threshold)` that calls `sigma(X, theta)` to
-calculate an array of predicted probabilities and then labes them using `threshold`. If
+calculate an array of predicted probabilities and then labels them using `threshold`. If
 a given probability is greater than `threshold`, label it `1` and `0` otherwise.
 
 4. Write a function `loss(X, y, theta)` that evaluates the negative log-likelihood
