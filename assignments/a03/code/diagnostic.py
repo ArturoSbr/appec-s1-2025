@@ -48,7 +48,10 @@ X = df.loc[:, :'x5'].values
 y = df['y'].values
 
 # Use your algorithm to get the best parameters
-theta = gradient_descent(X=X, y=y, random_state=42)
+theta = gradient_descent(
+    X=X, y=y, random_state=42,
+    max_iter=10000, min_gain=0.00001, step_size=0.001
+)
 
 # Use your parameters to classify each observation
 pred = classify(X=X, theta=theta, threshold=0.5)
