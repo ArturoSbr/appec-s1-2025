@@ -10,6 +10,10 @@ import subprocess
 class TestAssignment2(unittest.TestCase):
     student_module = None
     student_file = None
+    
+    # Scoring tracking
+    score = 0
+    total_tests = 12
 
     @classmethod
     def setUpClass(cls):
@@ -24,7 +28,6 @@ class TestAssignment2(unittest.TestCase):
         elif len(student_files) > 1:
             print(f"Warning: Multiple solution files found: {student_files}. Testing {student_files[0]}.")
         
-        # Save filename to class attribute for Q12 linting
         cls.student_file = student_files[0]
         print(f"Grader: Loading {cls.student_file}...")
 
@@ -39,6 +42,15 @@ class TestAssignment2(unittest.TestCase):
             print(f"CRITICAL: Student script crashed during execution: {e}")
             print("Grader will attempt to test variables created before the crash.")
 
+    @classmethod
+    def tearDownClass(cls):
+        """
+        Prints the final grade after all tests have run.
+        """
+        print("\n" + "="*30)
+        print(f"Final grade: {cls.score}/{cls.total_tests}")
+        print("="*30 + "\n")
+
     def get_variable(self, var_name):
         """Helper to safely get a variable from the student's code."""
         if not hasattr(self.student_module, var_name):
@@ -50,15 +62,24 @@ class TestAssignment2(unittest.TestCase):
     # ------------------------------------------------------------------
 
     def test_q01_happy_column(self):
-        """Q1: Checks 'happy' column stats in table_reviews."""
+        """Q1: Checks 'happy' column creation logic."""
         df = self.get_variable('table_reviews')
         
         if 'happy' not in df.columns:
             self.fail("Column 'happy' not found in table_reviews.")
             
-        happy_col = df['happy']
-        self.assertAlmostEqual(happy_col.count(), 99224, delta=10, msg="Q1: 'happy' count is incorrect.")
-        self.assertAlmostEqual(happy_col.mean(), 0.770680, places=4, msg="Q1: 'happy' mean is incorrect.")
+        # FIX: We cannot check the count (99224) because Q2 filters rows later.
+        # Instead, we verify the LOGIC matches the requirement on the remaining rows.
+        # Logic: happy == 1 if review_score >= 4, else 0.
+        
+        expected_happy = df['review_score'].ge(4).astype(int)
+        
+        # Check if student's column matches our recalculation
+        matches = (df['happy'] == expected_happy).all()
+        self.assertTrue(matches, "Q1: Logic for 'happy' column is incorrect (values do not match review_score >= 4).")
+        
+        # If we get here, pass
+        TestAssignment2.score += 1
 
     def test_q02_reviews_filtering(self):
         """Q2: Checks filtering and sorting of table_reviews."""
@@ -75,6 +96,8 @@ class TestAssignment2(unittest.TestCase):
             self.assertEqual(actual_ts, expected_ts, f"Q2: Incorrect timestamp for order {target_id}")
         except IndexError:
             self.fail(f"Q2: Test order_id '{target_id}' not found in dataframe.")
+            
+        TestAssignment2.score += 1
 
     def test_q03_aggregation(self):
         """Q3: Checks aggregation logic in agg_items."""
@@ -87,6 +110,8 @@ class TestAssignment2(unittest.TestCase):
 
         self.assertAlmostEqual(df.shape[0], 98666, delta=5, msg="Q3: Row count incorrect.")
         self.assertAlmostEqual(df['avg_price'].mean(), 125.919, places=2, msg="Q3: avg_price mean incorrect.")
+        
+        TestAssignment2.score += 1
 
     # ------------------------------------------------------------------
     # Q4 - Q6: Merging and Feature Engineering (Part 1)
@@ -98,6 +123,8 @@ class TestAssignment2(unittest.TestCase):
         # Row count must be consistent throughout
         self.assertEqual(df.shape[0], 97917, "Q4: df row count is incorrect.")
         self.assertEqual(df['order_id'].duplicated().sum(), 0, "Q4: Duplicate order_ids found in df.")
+        
+        TestAssignment2.score += 1
 
     def test_q05_days_delay_calc(self):
         """Q5: Checks 'days_delay' calculation in table_orders."""
@@ -108,6 +135,8 @@ class TestAssignment2(unittest.TestCase):
             
         self.assertAlmostEqual(df['days_delay'].count(), 96476, delta=10, msg="Q5: 'days_delay' count is incorrect.")
         self.assertAlmostEqual(df['days_delay'].mean(), -11.877, places=2, msg="Q5: 'days_delay' mean is incorrect.")
+        
+        TestAssignment2.score += 1
 
     def test_q06_merge_delay_status(self):
         """Q6: Checks merge of days_delay and order_status."""
@@ -119,6 +148,8 @@ class TestAssignment2(unittest.TestCase):
             
         # Check NaNs as requested (2087 indicates pending orders)
         self.assertEqual(df['days_delay'].isna().sum(), 2087, "Q6: Incorrect number of NaNs in 'days_delay'.")
+        
+        TestAssignment2.score += 1
 
     # ------------------------------------------------------------------
     # Q7 - Q9: Feature Engineering (Part 2)
@@ -133,6 +164,8 @@ class TestAssignment2(unittest.TestCase):
 
         self.assertAlmostEqual(df.shape[0], 98666, delta=5, msg="Q7: Row count incorrect.")
         self.assertAlmostEqual(df['avg_pics'].mean(), 2.232, places=3, msg="Q7: avg_pics mean incorrect.")
+        
+        TestAssignment2.score += 1
 
     def test_q08_merge_photos(self):
         """Q8: Checks merge of avg_pics."""
@@ -143,6 +176,8 @@ class TestAssignment2(unittest.TestCase):
             
         # Check NaNs (Should be 0 due to imputation)
         self.assertEqual(df['avg_pics'].isna().sum(), 0, "Q8: NaNs found in 'avg_pics' column (Imputation failed?).")
+        
+        TestAssignment2.score += 1
 
     def test_q09_constant(self):
         """Q9: Checks creation of constant column."""
@@ -153,6 +188,8 @@ class TestAssignment2(unittest.TestCase):
         
         # Check value is 1
         self.assertTrue((df['const'] == 1).all(), "Q9: 'const' column contains values other than 1.")
+        
+        TestAssignment2.score += 1
 
     # ------------------------------------------------------------------
     # Q10 - Q11: Regression Models
@@ -170,6 +207,8 @@ class TestAssignment2(unittest.TestCase):
         self.assertAlmostEqual(params['const'], 1.314973, places=4, msg="Q10: 'const' coefficient incorrect.")
         self.assertAlmostEqual(params['n_items'], -0.498888, places=4, msg="Q10: 'n_items' coefficient incorrect.")
         self.assertAlmostEqual(params['days_delay'], -0.063472, places=4, msg="Q10: 'days_delay' coefficient incorrect.")
+        
+        TestAssignment2.score += 1
 
     def test_q11_logit_model_2(self):
         """Q11: Checks the second Logit model (m2_res)."""
@@ -183,6 +222,8 @@ class TestAssignment2(unittest.TestCase):
         self.assertAlmostEqual(params['const'], 0.769101, places=4, msg="Q11: 'const' coefficient incorrect.")
         self.assertAlmostEqual(params['avg_price'], 0.000106, places=5, msg="Q11: 'avg_price' coefficient incorrect.")
         self.assertAlmostEqual(params['days_delay'], -0.071962, places=4, msg="Q11: 'days_delay' coefficient incorrect.")
+        
+        TestAssignment2.score += 1
 
     # ------------------------------------------------------------------
     # Q12: Code Style
@@ -208,6 +249,9 @@ class TestAssignment2(unittest.TestCase):
             errors = result.stdout.strip()
             msg = f"Q12: flake8 found style errors:\n{errors}"
             self.fail(msg)
+            
+        TestAssignment2.score += 1
 
 if __name__ == '__main__':
     unittest.main(argv=['first-arg-is-ignored'], exit=False, verbosity=2)
+    

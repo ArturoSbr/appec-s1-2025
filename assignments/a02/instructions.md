@@ -1,5 +1,29 @@
 # Assignment 2
 
+This is your second assignment. Before you get started, open our repo in a new
+terminal and:
+
+1. Switch to develop: `git checkout develop`
+2. Update develop: `git pull origin develop`
+3. Create and switch to your own branch: `git checkout -b
+assignment/a02-<student ID>`
+4. Create a copy of the `hints.py` file and rename it:
+`cp assignments/a02/code/hints.py assignments/a02/code/sol-<student ID>.py`
+5. Answer all questions in the file you just created.
+6. Add, commit and push your file.
+
+It is **SUPER IMPORTANT** that your branch is named
+`assignment/a02-<student ID>` and that your file is named `sol-<student ID>.py`.
+Otherwise, the grader will not grade it.
+
+Also, make sure you push your code to your branch. You don't need to open a Pull
+Request!
+
+Finally, you can view your grades [here](
+    https://github.com/ArturoSbr/appec-s1-2025/actions
+). You simply have to find your workflow run (AKA the code you just pushed to
+your branch.
+
 # Introduction
 
 We will use the Olist e-commerce database for this assignment. Our goal is to
