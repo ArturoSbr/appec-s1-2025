@@ -168,7 +168,3 @@ m2 = sm.Logit(
 
 m2_res = m2.fit()
 m2_res.summary()
-#m2_res.nobs == 86296
-#coef const      ≈ 0.769101
-#coef avg_price  ≈ 0.000106
-#coef days_delay ≈ -0.071962
