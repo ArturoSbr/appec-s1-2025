@@ -89,8 +89,8 @@ df['days_delay'].isna().sum()
 # Q7. Join table_items and table_products to calculate avg_pics
 
 median_photos = table_products['product_photos_qty'].median()
-        table_products['product_photos_qty'] = \
-        table_products['product_photos_qty'].fillna(median_photos)
+table_products['product_photos_qty'] = \
+table_products['product_photos_qty'].fillna(median_photos)
 
 table_products['product_photos_qty'].describe()
 
