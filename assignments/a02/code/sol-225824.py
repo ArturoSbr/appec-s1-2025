@@ -58,12 +58,12 @@ df.info()
 # convertir a formato de fecha
 table_orders['order_estimated_delivery_date'] = pd.to_datetime(
     table_orders['order_estimated_delivery_date'],
-    format = '%Y-%m-%d %H:%M:%S'
+    format='%Y-%m-%d %H:%M:%S'
 )
 
 table_orders['order_delivered_customer_date'] = pd.to_datetime(
     table_orders['order_delivered_customer_date'],
-    format = '%Y-%m-%d %H:%M:%S'
+    format='%Y-%m-%d %H:%M:%S'
 )
 table_orders.info()
 
@@ -88,9 +88,9 @@ df['days_delay'].isna().sum()
 
 # Q7. Join table_items and table_products to calculate avg_pics
 
-median_photos =table_products['product_photos_qty'].median()
-table_products['product_photos_qty'] = \
-table_products['product_photos_qty'].fillna(median_photos)
+median_photos = table_products['product_photos_qty'].median()
+        table_products['product_photos_qty'] = \
+        table_products['product_photos_qty'].fillna(median_photos)
 
 table_products['product_photos_qty'].describe()
 
@@ -114,11 +114,12 @@ agg_pics.describe()
 
 # Q8. Add avg_pics to df
 df = pd.merge(
-    left= df,
+    left=df,
     right=agg_pics[['order_id', 'avg_pics']],
     how='inner',
     on=['order_id']
 )
+
 df.describe()
 
 # Q9. Add 'const' to df
@@ -137,7 +138,7 @@ X = df_model[['const', 'n_items', 'avg_price', 'avg_shipping',
 y = df_model['happy']
 
 # modelo
-# Convert days_delay 
+# Convert days_delay
 
 m1 = sm.Logit(y, X, missing='drop')
 
@@ -146,11 +147,11 @@ m1_res.summary()
 
 # Q11. Fit model 2
 
-df_m2=df[(df['order_status'] == 'delivered') & (df['n_items'] == 1)].copy()
+df_m2 = df[(df['order_status'] == 'delivered') & (df['n_items'] == 1)].copy()
 
-X2=df_m2[['const', 'avg_price', 'avg_shipping', 'days_delay', 'avg_pics']]
-y2=df_m2['happy']
+X2 = df_m2[['const', 'avg_price', 'avg_shipping', 'days_delay', 'avg_pics']]
+y2 = df_m2['happy']
 
-m2=sm.Logit(y2, X2, missing='drop')
-m2_res=m2.fit()
+m2 = sm.Logit(y2, X2, missing='drop')
+m2_res = m2.fit()
 m2_res.summary()
