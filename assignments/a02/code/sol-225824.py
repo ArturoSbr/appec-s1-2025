@@ -1,20 +1,20 @@
-# Import the package
+# Imports
 import os
 import pandas as pd
 import statsmodels.api as sm
 
-# Loading .csv file
+# Read tables (don't change anything here)
 table_items = pd.read_csv(os.path.join('..', 'data', 'items.csv'))
 table_orders = pd.read_csv(os.path.join('..', 'data', 'orders.csv'))
 table_products = pd.read_csv(os.path.join('..', 'data', 'products.csv'))
 table_reviews = pd.read_csv(os.path.join('..', 'data', 'reviews.csv'))
 
-#1. We say a customer is "happy" with their order if they leave a review score
-#of 4 or 5. Assign a new column to `table_reviews` named `'happy'` that encodes
-#this logic (1 = happy, 0 otherwise).
+# --- Data Cleaning and Preparation ---
 
+# Q1. Create binary target
+# We say a customer is "happy" with their order if they leave a review score of
+# 4 or 5.
 table_reviews['happy'] = (table_reviews['review_score'] >= 4).astype(int)
-table_reviews.head()
 
 #2. Note that there's more reviews than there are order IDs. This happens
 #when a user changes their thoughts and updates their review. You need to update
