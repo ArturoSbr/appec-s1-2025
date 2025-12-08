@@ -12,18 +12,9 @@ table_reviews = pd.read_csv(os.path.join('..', 'data', 'reviews.csv'))
 # --- Data Cleaning and Preparation ---
 
 # Q1. Create binary target
-# We say a customer is "happy" with their order if they leave a review score of
-# 4 or 5.
 table_reviews['happy'] = (table_reviews['review_score'] >= 4).astype(int)
 
-#2. Note that there's more reviews than there are order IDs. This happens
-#when a user changes their thoughts and updates their review. You need to update
-#`table_reviews` so that only the latest review of each order is preserved.
-#Convert column `review_answer_timestamp` to datetime using `pd.to_datetime` and
-#then use it to get the latest review for each order (hint: use
-#`format='%Y-%m-%d %H:%M:%S'` when casting the column to datetime format).
-
-#convertir a formato de fecha
+# Q2. Keep only the last review of each order
 table_reviews['review_answer_timestamp'] = pd.to_datetime(
     table_reviews['review_answer_timestamp'],
     format='%Y-%m-%d %H:%M:%S'
@@ -38,19 +29,7 @@ table_reviews = (
 )
 table_reviews.info()
 
-#3. As you know, a single order may include multiple items. A peculiar thing
-#about Olist is that their user satisfaction survey does not allow customers to
-#review items individually. Instead, it only allows them to review the order as
-#a whole. This means we need to aggregate orders with multiple items to get a
-#1:1 relationship of rows between tables. For example, if an order has three
-#products, it will show up three times in the items table, but the order only
-#has one row in the reviews table! There's many different ways to go about this,
-#but we will "compress" this information into a single row using aggregation
-#functions.
-#Use `table_items` to create a new dataframe that has the number of items, the
-#average price, and the average freight value of the items in each order.
-#The new dataframe must be named `agg_items`, and its columns should be named
-#`'order_id'`, `'n_items'`, `'avg_price'` and `'avg_shipping'`.
+# Q3 Declare agg_items
 
 agg_items = (
     table_items
@@ -64,15 +43,7 @@ agg_items = (
 
 agg_items.describe()
 
-#4. Create a new dataframe named `df`. This will be our primary input for all
-#the models we will run later. Define this new table as the inner join between
-#`table_reviews` and `agg_items` using `order_id` as join key.
-#You may have noticed that `df` has less rows than `table_reviews`. This means
-#there are orders that do not appear in the items table but do appear in the
-#reviews table! This happens because `table_items` only shows items that were
-#successfully delivered. Hence, this mismatch in rows might happen when a
-#customer cancels the order before receiving it but still leaves a review.
-#97,917
+# Q4. Join table_reviews and agg_items to create df
 
 df = pd.merge(
     left= table_reviews,
@@ -82,16 +53,7 @@ df = pd.merge(
 )
 df.info()
 
-#5. It seems reasonable to think that an early or late delivery will impact the
-#customer's review. To test this, we will calculate the number of days that
-#an order was delayed. First, take `table_orders` and transform columns
-#`'order_estimated_delivery_date'` and `'order_delivered_customer_date'` to
-#DateTime format using `pd.to_datetime` (hint: use `format='%Y-%m-%d %H:%M:%S'`
-#to parse the strings). Then create a new column called `days_delay` by
-#subtracting the estimated delivery date from the customer delivery date
-#(if it's negative, then it arrived early, and if it's positive,
-#it arrived late) and only keep its `day` part
-#(hint: access the new column's `.dt.days` attribute)
+# Q5. Calculate days_delay in table_orders
 
 #convertir a formato de fecha
 table_orders['order_estimated_delivery_date'] = pd.to_datetime(
@@ -116,10 +78,7 @@ table_orders['days_delay'] = (
 
 table_orders.describe()
 
-#6. Inner join `df` with `table_orders` using `order_id` as join key and make
-#sure you're only adding columns `order_status`, `days_delay` to `df` (don't add
-#any other columns from `table_orders`).
-#Nan = 2,087
+# Q6. Join df and table_orders to add days_delay
 df = pd.merge(
     left= df,
     right= table_orders[['order_id', 'order_status', 'days_delay']],
@@ -128,16 +87,7 @@ df = pd.merge(
 )
 df['days_delay'].isna().sum()
 
-#7. It seems reasonable to think that if a listing has many photos, the
-#customer will be able to make a more informed decision when buying that product
-#and would therefore be less likely to leave a negative review (because the
-#photos would arguably serve as a proxy for the product's quality and features).
-#First fill the null values of column `table_products['product_photos_qty']`
-#with its own median value. Then, add column `product_photos_qty` to
-#`table_items` by joining it with `table_products` on `product_id`. Finally,
-#calculate column `avg_pics` as the average number of photos per order and
-#store this aggregated dataset in a dataframe called `agg_pics`.
-#This frame's only columns must be `order_id` and `avg_pics`.
+# Q7. Join table_items and table_products to calculate avg_pics
 
 median_photos = table_products['product_photos_qty'].median()
 table_products['product_photos_qty'] = \
@@ -163,9 +113,7 @@ agg_pics = (
 
 agg_pics.describe()
 
-#8. The whole point of calculating `'avg_pics` is to use it as a feature in
-#our models, so inner join `df` and `agg_pics` on `order_id` (do not add any
-#other columns).
+# Q8. Add avg_pics to df
 df = pd.merge(
     left= df,
     right= agg_pics[['order_id', 'avg_pics']],
@@ -174,19 +122,11 @@ df = pd.merge(
 )
 df.describe()
 
-#9. Add a column full of ones named `'const'` to `df`. This is my gift to you.
+# Q9. Add 'const' to df
 df['const'] = 1
 df.describe()
 
-#10. Fit a logistic regression model to the final form of `df`.
-#Make sure to only use delivered orders (filter `'order_status'`).
-#The endogenous variable must be *happy*, and the exogenous variables must
-#be *const, n_items, avg_price, avg_shipping, days_delay and avg_pics*.
-#Store the model in `m1` and the fitted model in `m1_res`.
-#Set `missing='drop'` to drop rows that have at least one null
-#value in any of their columns.
-#95,824
-#nos quedamos solo con las ordenes entregadas
+# Q10. Fit model 1
 df = df[df['order_status'] == 'delivered'].copy()
 df.describe()
 
@@ -213,16 +153,7 @@ m1_res.summary()
 #params['n_items']    ≈ -0.498888
 #params['days_delay'] ≈ -0.063472
 
-#11. Now fit a logistic regression model to the final form of `df`. Like before,
-#use delivered orders, and this time, exclude orders with multiple items. This
-#way, aggregated columns such as `'avg_price'` now represent the actual price of
-#the only product in the order. This is just a robustness test to check
-#if orders with more than one order are skewing our results.
-#The endogenous variable must be *happy*, and the exogenous variables must be
-#*const, avg_price, avg_shipping, days_delay and avg_pics*.
-#We're dropping *n_items* because it is now full of ones.
-#Store the model in `m2` and the fitted values in `m2_res`.
-#Use `missing='drop'` again to exclude observations with null values.
+# Q11. Fit model 2
 
 df_m2 = df[(df['order_status'] == 'delivered') & (df['n_items'] == 1)].copy()
 
