@@ -14,10 +14,10 @@ import pandas as pd
 import statsmodels.api as sm
 
 # Read tables (don't change anything here)
-table_items = pd.read_csv(os.path.join('assignments', 'a02', 'data', 'items.csv'))
-table_orders = pd.read_csv(os.path.join('assignments', 'a02', 'data', 'orders.csv'))
-table_products = pd.read_csv(os.path.join('assignments', 'a02', 'data', 'products.csv'))
-table_reviews = pd.read_csv(os.path.join('assignments', 'a02', 'data', 'reviews.csv'))
+table_items = pd.read_csv(os.path.join('..', 'data', 'items.csv'))
+table_orders = pd.read_csv(os.path.join('..', 'data', 'orders.csv'))
+table_products = pd.read_csv(os.path.join('..', 'data', 'products.csv'))
+table_reviews = pd.read_csv(os.path.join('..', 'data', 'reviews.csv'))
 
 # Q1. Create binary target
 table_reviews['happy'] = (table_reviews['review_score'] >= 4).astype(int)
