@@ -65,8 +65,10 @@ df = pd.merge(
 )
 
 # Q7. Join table_items and table_products to calculate avg_pics
-median_photos = table_products['product_photos_qty'].median()
-table_products['product_photos_qty'] = table_products['product_photos_qty'].fillna(median_photos)
+median_photos = table_products["product_photos_qty"].median()
+table_products["product_photos_qty"] = table_products["product_photos_qty"].fillna(
+    median_photos
+)
 
 items_w_pics = pd.merge(table_items, table_products, on='product_id', how='inner')
 
@@ -83,8 +85,16 @@ df['const'] = 1
 # Q10. Fit model 1
 df_delivered = df[df['order_status'] == 'delivered'].copy()
 
-y = df_delivered['happy']
-X1 = df_delivered[['const', 'n_items', 'avg_price', 'avg_shipping', 'days_delay', 'avg_pics']]
+y = df_delivered["happy"]
+cols_1 = [
+    "const",
+    "n_items",
+    "avg_price",
+    "avg_shipping",
+    "days_delay",
+    "avg_pics",
+]
+X1 = df_delivered[cols_1]
 
 m1 = sm.Logit(y, X1, missing='drop')
 m1_res = m1.fit()
