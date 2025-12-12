@@ -21,7 +21,7 @@ $ python assignments/a03/code/diagnostic.py  # Execute this file
 import os
 import pandas as pd
 from sklearn.metrics import f1_score
-from assignments.a03.code.sol import classify, gradient_descent
+from sol import classify, gradient_descent
 
 # Log message
 MSG = """Your algorithm achieved an F1 score of {f1:.3f} on the training data.
