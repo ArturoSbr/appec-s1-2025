@@ -1,3 +1,16 @@
+"""Skeleton code to help get you started.
+
+Do not modify this code because I will not grade it. Instead, make a copy of this file
+and rename it `sol.py` and modify it there. Please note you don't need to add your
+Student ID to it this time. The file should literally be called `sol.py`.
+
+Anyway, this file contains all the functions you need to define. Together, they're meant
+to work as the naive implementation of the gradient descent algorithm we saw in class.
+
+See `../instructions.md` for more details!
+"""
+
+# Imports (you don't need anything else!)
 import numpy as np
 
 
